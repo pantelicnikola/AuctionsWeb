@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/">AuctionsWeb</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    
+                    <li>
+                        <div class="nav-link">
+                            @Html.ActionLink("Search", "Search", "Home")
+                        </div>
+                    </li>
+                    @if (Request.IsAuthenticated)
+                    {
+                        if (User.IsInRole("admin"))
+                        {
+                            <li>
+                                <div class="nav-link">
+                                    @Html.ActionLink("OpenAuctions", "OpenAuctions", "AdminFunctionalities")
+                                </div>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <div class="nav-link">
+                                    @Html.ActionLink("CreateAuction", "CreateAuction", "UserFunctionalities")
+                                </div>
+                            </li>
+                        }
+
+                    }
+                </ul>
+                @Html.Partial("_LoginPartial")
+
+
+            </div>
+        </nav>
+    </div>
+    <div class="container-fluid body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>                                                                                                                                                                                                                                          

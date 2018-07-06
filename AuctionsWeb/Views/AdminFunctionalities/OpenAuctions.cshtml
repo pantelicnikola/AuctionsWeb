@@ -1,0 +1,46 @@
+﻿@model AuctionsWeb.Models.OpenAuctionsModel
+
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price Start</th>
+                <th scope="col">Time Created</th>
+                <th scope="col">Duration[s]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var auction in Model.auctions)
+            {
+                <tr>
+                    <td>@auction.Id</td>
+                    <td>@auction.Name</td>
+                    <td>@auction.PriceStart</td>
+                    <td>@auction.TimeCreate</td>
+                    <td>@auction.Duration</td>
+                    
+                    <td><input type="button" title="Add2" value="Add2" onclick="location.href='@Url.Action("Add", "AdminFunctionalities", new { id = auction.Id, duration = auction.Duration })'" /></td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+@*<td><button onclick=@Html.RenderAction("Add", new { toAdd = auction })>ssss</button></td>*@
+@*<td><input type="button" onclick="location.href='@Url.Action("Add", new { toAdd = auction })" value="sisaj"/></td>*@
+@*<td><button type="button" class="btn btn-primary btn-rounded btn-sm my-0" onclick="@Html.Action("Add", new { toAdd = auction })"></button></td>*@
+@*@using (Html.BeginForm("OpenAuctions", "AdminFunctionalities", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        <td>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Add1" class="btn btn-default" />
+                </div>
+            </div>
+        </td>
+    }*@
+@*<td><input type="button" value="Add" onclick="location.href='@Url.Action("Add", "AdminFunctionalitiesController")'" /></td>*@

@@ -1,0 +1,29 @@
+﻿@model Auction
+
+@{
+    var lastBidder = "No Bids Yet";
+    var bids = Model.Bids.AsQueryable();
+    bids = bids.OrderByDescending(a => a.Time);
+    if (!bids.Count().Equals(0))
+    {
+        lastBidder = bids.First().AspNetUser.UserName;
+    }
+}
+
+<div class="col-sm-3 mt-4">
+    <div class="card">
+        <div class="card-header bg-transparent border-success">
+            @Html.ActionLink(Model.Name, "Auction", "Home", new { id = Model.Id }, null)
+        </div>
+        <img class="card-img-top" src="http://via.placeholder.com/277x200" alt="Card image cap">
+        <div class="card-body">
+            <p class="card-text">@Model.PriceNow</p>
+            @*<p class="card-text">@lastPrice &#36;</p>*@
+            <p class="card-text">@lastBidder</p>
+            <h5 class="card-title">@Model.State</h5>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">@DateTime.Now.ToShortTimeString()</small>
+        </div>
+    </div>
+</div>

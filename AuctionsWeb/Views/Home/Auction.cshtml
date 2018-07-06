@@ -1,0 +1,45 @@
+﻿@model AuctionsWeb.Models.AuctionViewModel
+
+@*@Html.Partial("Card", Model.Auction)
+
+Bids:*@
+
+@*@foreach(var bid in Model.Auction.Bids)
+{
+    <p>@bid.Amount</p>
+    <p>@bid.Time</p>
+   
+}*@
+
+<div class="row">
+    
+    @Html.Partial("Card", Model.Auction)
+    
+    <div class="col m-md-4">
+        <div class="container">
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Auction Name</th>
+                        <th scope="col">UserName</th>
+                        <th scope="col">Time of Bid</th>
+                        <th scope="col">Amount [&#36;]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var bid in Model.Auction.Bids)
+                    {
+                        <tr>
+                            <td>@bid.Auction.Name</td>
+                            <td>@bid.AspNetUser.UserName</td>
+                            <td>@bid.Time</td>
+                            <td>@bid.Amount</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
