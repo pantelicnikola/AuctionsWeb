@@ -63,11 +63,43 @@
     </div>
 }
 
-<div class="card-deck">
-    @foreach (var auction in Model.Auctions)
-    {
-        @Html.Partial("Card", auction)
-    }
-</div>
+<div id="resultDiv"></div>
 
+
+@section Scripts{
+    <script src="~/Scripts/jquery.signalR-2.3.0.min.js"></script>
+    <script src="~/SignalR/hubs"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var notifications = $.connection.myHub;
+            notifications.client.displayStatus = function () {
+                console.log("triggered");
+                getData();
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("connection started");
+                getData();
+            }).fail(function(error) {
+                alert(error)
+            });
+        });
+
+        function getData() {
+            console.log("getData() called");
+            var model = $('#resultDiv');
+            $.ajax({
+                url: '/Home/InflateCards',
+                contentType: 'application/html ; charset:utf-8',
+                type: 'GET',
+                dataType: 'html',
+                success: function (data) {
+                    model.empty().append(data);
+                }
+            });
+        }
+    </script>
+
+}
 

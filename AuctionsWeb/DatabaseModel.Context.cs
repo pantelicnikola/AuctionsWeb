@@ -33,6 +33,5 @@ namespace AuctionsWeb
         public virtual DbSet<Auction> Auctions { get; set; }
         public virtual DbSet<Bid> Bids { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
-
     }
 }

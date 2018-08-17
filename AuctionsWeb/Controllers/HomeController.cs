@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,11 +6,19 @@ using System.Web.Mvc;
 using AuctionsWeb.Models;
 using AuctionsWeb.Enums;
 using AuctionsWeb.Constants;
+using System.Collections.Generic;
+using System.Web;
+using System.Configuration;
+using System.Data.SqlClient;
+using AuctionsWeb.Views.MyHub;
 
 namespace AuctionsWeb.Controllers
 {
     public class HomeController : Controller
-    { 
+    {
+
+        public IQueryable globalQuery { get; set; }
+        public List<Auction> list { get; set; }
 
         public ActionResult Index()
         {
@@ -22,14 +28,12 @@ namespace AuctionsWeb.Controllers
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
-
             return View();
         }
 
@@ -37,51 +41,116 @@ namespace AuctionsWeb.Controllers
         public ActionResult Search()
         {
             ViewBag.Message = "Your Search page.";
-            //SearchViewModel model = new SearchViewModel();
-            //var entity = new auctiondbEntities();
-            //model.Auctions = entity.Auctions.Take(10).ToList<Auction>();
-            return View(new SearchViewModel());
+
+            HttpCookie aCookie = new HttpCookie("searchInfo");
+            aCookie.Values["name"] = "";
+            aCookie.Values["minPrice"] = "";
+            aCookie.Values["maxPrice"] = "";
+            aCookie.Values["minDate"] = "";
+            aCookie.Values["maxDate"] = "";
+            aCookie.Values["state"] = "";
+            //aCookie.Path = "/Application1";
+            Response.Cookies.Add(aCookie);
+
+            return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Search(SearchViewModel model)
+        public ActionResult Search(SearchViewModel model)
         {
+
+            HttpCookie aCookie = new HttpCookie("searchInfo");
+            aCookie.Values["name"] = model.Name;
+            aCookie.Values["minPrice"] = model.MinPrice.ToString();
+            aCookie.Values["maxPrice"] = model.MaxPrice.ToString();
+            aCookie.Values["minDate"] = model.MinDate.ToString();
+            aCookie.Values["maxDate"] = model.MaxDate.ToString();
+            aCookie.Values["state"] = model.State.ToString();
+            //aCookie.Path = "/Application1";
+            Response.Cookies.Add(aCookie);
+            
+            return View();
+
+        }
+
+         
+
+
+        public ActionResult InflateCards()
+        {
+            var auctionsList = new List<Auction>();
+            string commandText = null;
+            
             var entity = new auctiondbEntities();
             var auctions = entity.Auctions.AsQueryable();
-            //if (model.Name == null && model.MinPrice == null && model.MaxDate == null && model.MaxPrice == null && model.MinDate == null && model.State == null)
-            //{
-            //    auctions = auctions.Where(a => a.State.Equals())
-            //}
-            if (!(model.Name == null))
+            var cookieValues = Request.Cookies["searchInfo"].Values;
+            SearchViewModel model = new SearchViewModel();
+
+            if (!(Server.HtmlEncode(cookieValues["name"]) == ""))
             {
-                auctions = auctions.Where(a => a.Name.Contains(model.Name));
+                string asd = Server.HtmlEncode(cookieValues["name"]);
+                auctions = auctions.Where(a => a.Name.Contains(asd));
             }
-            if (!(model.MinPrice == null))
+            if (!(Server.HtmlEncode(cookieValues["minPrice"]) == ""))
             {
-                auctions = auctions.Where(a => a.PriceNow.Value > model.MinPrice);
+                int asd = Int32.Parse(Server.HtmlEncode(cookieValues["minPrice"]));
+                auctions = auctions.Where(a => a.PriceNow.Value > asd);
             }
-            if (!(model.MaxPrice == null))
+            if (!(Server.HtmlEncode(cookieValues["maxPrice"]) == ""))
             {
-                auctions = auctions.Where(a => a.PriceNow.Value < model.MaxPrice);
+                int asd = Int32.Parse(Server.HtmlEncode(cookieValues["maxPrice"]));
+                auctions = auctions.Where(a => a.PriceNow.Value < asd);
             }
-            if (!(model.MinDate == null))
+            if (!(Server.HtmlEncode(cookieValues["minDate"]) == ""))
             {
-                auctions = auctions.Where(a => a.TimeCreate > model.MinDate);
+                DateTime asd = DateTime.Parse(Server.HtmlEncode(cookieValues["minDate"]));
+                auctions = auctions.Where(a => a.TimeCreate > asd);
             }
-            if (!(model.MaxDate == null))
+            if (!(Server.HtmlEncode(cookieValues["maxDate"]) == ""))
             {
-                auctions = auctions.Where(a => a.TimeCreate < model.MaxDate);
+                DateTime asd = DateTime.Parse(Server.HtmlEncode(cookieValues["maxDate"]));
+                auctions = auctions.Where(a => a.TimeCreate < asd);
             }
-            if (!(model.State == null))
+            if (!(Server.HtmlEncode(cookieValues["state"]) == ""))
             {
-                auctions = auctions.Where(a => a.State.Equals(model.State.ToString()));
+                string asd = Server.HtmlEncode(cookieValues["state"]);
+                auctions = auctions.Where(a => a.State.Equals(asd));
             }
             if (auctions.Equals(entity.Auctions))
             {
                 auctions = auctions.Where(a => a.State.Equals(AuctionStates.OPEN.ToString())).OrderBy(a => a.TimeOpen).Take(SystemParameters.DEFAULT_NUMBER_AUCTIONS);
             }
-            model.Auctions = await auctions.ToListAsync();
-            return View(model);
+
+            commandText = auctions.ToString();
+            auctionsList = auctions.ToList();
+            addDependency(commandText);
+
+            return PartialView("Cards", auctionsList);
+        }
+
+
+        public void addDependency(string commandText)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.OpenAsync();
+                using (SqlCommand sqlCommand = new SqlCommand(commandText, connection))
+                {
+                    sqlCommand.CommandType = System.Data.CommandType.Text;
+                    sqlCommand.Notification = null;
+                    var dependency = new SqlDependency(sqlCommand);
+                    dependency.OnChange += (sender, sqlNotificationEvents) =>
+                    {
+                        if (sqlNotificationEvents.Type == SqlNotificationType.Change)
+                        {
+                            MyHub.Show();
+                        }
+                    };
+
+                    sqlCommand.ExecuteReaderAsync();
+                }
+            }
         }
 
         public ActionResult Auction(int id)
@@ -92,6 +161,7 @@ namespace AuctionsWeb.Controllers
 
             return View(model);
         }
+
 
     }
 }

@@ -28,19 +28,21 @@ namespace AuctionsWeb.Models
 
         [Display(Name = "State")]
         public AuctionStates? State { get; set; }
-        
+
+        public List<Auction> Auctions { get; set; }
+
+        public string SqlQuery { get; set; }
 
         public SearchViewModel()
         {
             Auctions = new List<Auction>();
         }
+    }        
 
-        public List<Auction> Auctions { get; set; }
-    }  
     
     public class AuctionViewModel
     {
         public Auction Auction { get; set; }
-    }  
+    } 
 
 }

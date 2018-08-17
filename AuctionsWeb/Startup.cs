@@ -9,6 +9,7 @@ namespace AuctionsWeb
     {
         public async void Configuration(IAppBuilder app)
         {
+            // ovo mora da bude prvo ????
             app.MapSignalR();
             ConfigureAuth(app);
             await ConfigureRole();

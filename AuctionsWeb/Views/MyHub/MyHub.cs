@@ -1,17 +1,15 @@
 ﻿using Microsoft.AspNet.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNet.SignalR.Hubs;
 
-namespace AuctionsWeb.MyHub
+namespace AuctionsWeb.Views.MyHub
 {
     public class MyHub : Hub
     {
-        public void Announce(string announcement)
+        [HubMethodName("Show")]
+        public static void Show()
         {
-            Clients.All.Announce(announcement);
+            IHubContext context = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
+            context.Clients.All.displayStatus();
         }
     }
 }
