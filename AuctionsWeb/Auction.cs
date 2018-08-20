@@ -21,6 +21,7 @@ namespace AuctionsWeb
         }
     
         public int Id { get; set; }
+        public string IdUser { get; set; }
         public string Name { get; set; }
         public string Photo { get; set; }
         public Nullable<int> Duration { get; set; }
@@ -31,10 +32,9 @@ namespace AuctionsWeb
         public Nullable<System.DateTime> TimeOpen { get; set; }
         public Nullable<System.DateTime> TimeEnd { get; set; }
         public string State { get; set; }
-        public string IdUser { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Bid> Bids { get; set; }
-        public virtual AspNetUser AspNetUser { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace AuctionsWeb
         public Nullable<int> IdAuction { get; set; }
         public string IdUser { get; set; }
         public Nullable<System.DateTime> Time { get; set; }
-        public Nullable<int> Amount { get; set; }
+        public Nullable<decimal> Amount { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual Auction Auction { get; set; }
