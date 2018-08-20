@@ -147,7 +147,6 @@ namespace AuctionsWeb.Controllers
                             MyHub.Show();
                         }
                     };
-
                     sqlCommand.ExecuteReaderAsync();
                 }
             }
@@ -162,6 +161,31 @@ namespace AuctionsWeb.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        //[Authorize]
+        public async Task<ActionResult> ModalAction(BidModalModel model)
+        {
+            if (model.NewBid > model.LastBid)
+            {
+                var bid = new Bid()
+                {
+                    IdUser = model.UserId,
+                    IdAuction = model.AuctionId,
+                    Amount = Convert.ToInt32(model.NewBid),
+                    Time = System.DateTime.Now
+                };
+
+                var entity = new auctiondbEntities();
+                entity.Bids.Add(bid);
+                await entity.SaveChangesAsync();
+
+            }
+            else
+            {
+
+            }
+            return View("Search");
+        }
 
     }
 }

@@ -43,6 +43,28 @@ namespace AuctionsWeb.Models
     public class AuctionViewModel
     {
         public Auction Auction { get; set; }
-    } 
+    }
+
+    public class BidModalModel
+    {
+        public int AuctionId { get; set; }
+
+        public string UserId { get; set; }
+
+        [Display(Name = "Last Bid")]
+        public decimal? LastBid { get; set; }
+
+        [Display(Name = "New Bid")]
+        public decimal NewBid { get; set; }
+
+        public BidModalModel() { }
+
+        public BidModalModel(int auctionId, string userId, decimal? lastBid)
+        {
+            AuctionId = auctionId;
+            UserId = userId;
+            LastBid = lastBid;
+        }
+    }
 
 }
