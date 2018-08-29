@@ -49,7 +49,7 @@ namespace AuctionsWeb.Models
     {
         public int AuctionId { get; set; }
 
-        public string UserId { get; set; }
+        public string AuctionName { get; set; }
 
         [Display(Name = "Last Bid")]
         public decimal? LastBid { get; set; }
@@ -59,10 +59,10 @@ namespace AuctionsWeb.Models
 
         public BidModalModel() { }
 
-        public BidModalModel(int auctionId, string userId, decimal? lastBid)
+        public BidModalModel(int auctionId, string auctionName, decimal? lastBid)
         {
             AuctionId = auctionId;
-            UserId = userId;
+            AuctionName = auctionName;
             LastBid = lastBid;
         }
     }

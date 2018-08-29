@@ -1,16 +1,14 @@
-﻿@using Microsoft.AspNet.Identity
-@model List<Auction>
+﻿@model List<Auction>
 
 
 <div class="card-deck">
     @foreach (var auction in Model)
     {
         var lastBidder = "No Bids Yet";
-        var bids = auction.Bids.AsQueryable();
-        bids = bids.OrderByDescending(a => a.Time);
+        var bids = auction.Bids;
         if (!bids.Count().Equals(0))
         {
-            lastBidder = bids.First().AspNetUser.UserName;
+            lastBidder = bids.OrderByDescending(a => a.Time).First().AspNetUser.UserName;
         }
         <div class="col-sm-3 mt-4">
             <div class="card">
@@ -22,10 +20,14 @@
                     <p class="card-text">@auction.PriceNow</p>
                     <p class="card-text">@lastBidder</p>
                     <h5 class="card-title">@auction.State</h5>
-                    @*<button class="btn btn-primary btn-sm" data-target="#myModal" data-toggle="modal" >Bid</button>*@
-                    @*@Html.ActionLink("Bid", "ModalAction", "Home", new { id = auction.Id }, new { data_toggle = "modal" })*@
-                    @Html.ActionLink("Bid", "ModalAction", "Home", new { id = auction.Id }, new { data_target = "#myModal", data_toggle = "modal" })
-                    
+                    <button id="btnSubmit" class="btn btn-primary btn-sm" data-target="#myModal" data-toggle="modal" data-auctionId="@auction.Id"  >Bid</button>    
+                    @*@Html.ActionLink("Bid", "ModalAction", "Home", new { auctionId = auction.Id, auctionName = auction.Name, auctionPriceNow = auction.PriceNow }, new { data_target = "#myModal", data_toggle = "modal" })*@
+                    @*<input type="button" 
+                           title="Bid" 
+                           value="Bid" 
+                           onclick="location.href='@Url.Action("ModalAction", "Home", new { auctionId = auction.Id, auctionName = auction.Name, auctionPriceNow = auction.PriceNow })'"  
+                           data-target="#myModal" 
+                           data-toggle="modal" />*@    
                 </div>
                 <div class="card-footer">
                     <small class="text-muted">@DateTime.Now.ToShortTimeString()</small>
@@ -33,13 +35,34 @@
             </div>
         </div>
 
-        
-        <div id="myModal" class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                @Html.Partial("ModalContent", new AuctionsWeb.Models.BidModalModel(auction.Id, User.Identity.GetUserId(), auction.PriceNow))
+        <div id="myModal" class="modal fade hidden-print" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content"> 
+                    @Html.Partial("BidModal", new AuctionsWeb.Models.BidModalModel(auction.Id, auction.Name, auction.PriceNow))
+                </div>
             </div>
         </div>
+        
+        
 
     }
 </div>
 
+
+
+
+
+@section scripts {
+    @* The normal bootstrap behavior is to only grab the content for the modal once, if you need to pull in different partial views then the data on the modal will have to be cleared.*@
+    <script type="text/javascript">
+        $(function () {
+            console.log("qweqweqwe");
+            $('#btnSubmit').click(function () {
+                console.log("asdasdasdasdasd");
+                var id = $(this).data('auctionId');
+                var name = $(this).data('auctionName');
+                var price = $(this).data('auctionPriceNow');
+            });
+        });
+    </script>
+}

@@ -432,7 +432,7 @@
     </Content>
     <Content Include="Views\Home\Auction.cshtml" />
     <Content Include="Views\Shared\Cards.cshtml" />
-    <Content Include="Views\Shared\ModalContent.cshtml" />
+    <Content Include="Views\Shared\BidModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

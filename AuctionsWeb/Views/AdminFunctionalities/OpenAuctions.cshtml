@@ -21,7 +21,13 @@
                     <td>@auction.TimeCreate</td>
                     <td>@auction.Duration</td>
                     
-                    <td><input type="button" title="Add2" value="Add2" onclick="location.href='@Url.Action("Add", "AdminFunctionalities", new { id = auction.Id, duration = auction.Duration })'" /></td>
+                    <td><input type="button" 
+                               title="Add2" 
+                               value="Add2" 
+                               onclick="location.href='@Url.Action("Add", 
+                                                      "AdminFunctionalities", 
+                                                      new { id = auction.Id, duration = auction.Duration })'" />
+                    </td>
 
                 </tr>
             }

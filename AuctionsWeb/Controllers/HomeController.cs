@@ -11,6 +11,8 @@ using System.Web;
 using System.Configuration;
 using System.Data.SqlClient;
 using AuctionsWeb.Views.MyHub;
+using Microsoft.AspNet.Identity;
+
 
 namespace AuctionsWeb.Controllers
 {
@@ -84,7 +86,6 @@ namespace AuctionsWeb.Controllers
             var entity = new auctiondbEntities();
             var auctions = entity.Auctions.AsQueryable();
             var cookieValues = Request.Cookies["searchInfo"].Values;
-            SearchViewModel model = new SearchViewModel();
 
             if (!(Server.HtmlEncode(cookieValues["name"]) == ""))
             {
@@ -118,12 +119,14 @@ namespace AuctionsWeb.Controllers
             }
             if (auctions.Equals(entity.Auctions))
             {
+                //auctions = auctions.Take(3);
                 auctions = auctions.Where(a => a.State.Equals(AuctionStates.OPEN.ToString())).OrderBy(a => a.TimeOpen).Take(SystemParameters.DEFAULT_NUMBER_AUCTIONS);
             }
 
             commandText = auctions.ToString();
+            //commandText.Replace("[c]", "[Extent1]");
             auctionsList = auctions.ToList();
-            addDependency(commandText);
+            addDependency(entity.Auctions.ToString());
 
             return PartialView("Cards", auctionsList);
         }
@@ -134,8 +137,8 @@ namespace AuctionsWeb.Controllers
             string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
-                connection.OpenAsync();
-                using (SqlCommand sqlCommand = new SqlCommand(commandText, connection))
+                connection.Open();
+                using (SqlCommand sqlCommand = new SqlCommand(commandText, connection)) 
                 {
                     sqlCommand.CommandType = System.Data.CommandType.Text;
                     sqlCommand.Notification = null;
@@ -147,7 +150,8 @@ namespace AuctionsWeb.Controllers
                             MyHub.Show();
                         }
                     };
-                    sqlCommand.ExecuteReaderAsync();
+                    sqlCommand.ExecuteReader();
+                    
                 }
             }
         }
@@ -161,24 +165,37 @@ namespace AuctionsWeb.Controllers
             return View(model);
         }
 
+        public ActionResult ModalAction(int auctionId, string auctionName, decimal auctionPriceNow)
+        {
+            return PartialView("BidModal", new BidModalModel
+            {
+                AuctionId = auctionId,
+                AuctionName = auctionName,
+                LastBid = auctionPriceNow
+            });
+        }
+
         [HttpPost]
-        //[Authorize]
-        public async Task<ActionResult> ModalAction(BidModalModel model)
+        [Authorize]
+        public ActionResult CreateBid(BidModalModel model)
         {
             if (model.NewBid > model.LastBid)
             {
                 var bid = new Bid()
                 {
-                    IdUser = model.UserId,
+                    IdUser = User.Identity.GetUserId(),
                     IdAuction = model.AuctionId,
-                    Amount = Convert.ToInt32(model.NewBid),
+                    Amount = model.NewBid,
                     Time = System.DateTime.Now
                 };
 
-                var entity = new auctiondbEntities();
-                entity.Bids.Add(bid);
-                await entity.SaveChangesAsync();
-
+                using (var db = new auctiondbEntities())
+                {
+                    db.Bids.Add(bid);
+                    var auction = db.Auctions.Where(a => a.Id == model.AuctionId).First();
+                    auction.PriceNow = model.NewBid;
+                    db.SaveChanges();
+                }
             }
             else
             {
