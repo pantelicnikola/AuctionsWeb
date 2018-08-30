@@ -119,12 +119,10 @@ namespace AuctionsWeb.Controllers
             }
             if (auctions.Equals(entity.Auctions))
             {
-                //auctions = auctions.Take(3);
                 auctions = auctions.Where(a => a.State.Equals(AuctionStates.OPEN.ToString())).OrderBy(a => a.TimeOpen).Take(SystemParameters.DEFAULT_NUMBER_AUCTIONS);
             }
 
             commandText = auctions.ToString();
-            //commandText.Replace("[c]", "[Extent1]");
             auctionsList = auctions.ToList();
             addDependency(entity.Auctions.ToString());
 

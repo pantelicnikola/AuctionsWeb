@@ -6,10 +6,12 @@
     {
         var lastBidder = "No Bids Yet";
         var bids = auction.Bids;
+
         if (!bids.Count().Equals(0))
         {
             lastBidder = bids.OrderByDescending(a => a.Time).First().AspNetUser.UserName;
         }
+
         <div class="col-sm-3 mt-4">
             <div class="card">
                 <div class="card-header bg-transparent border-success">
@@ -20,7 +22,16 @@
                     <p class="card-text">@auction.PriceNow</p>
                     <p class="card-text">@lastBidder</p>
                     <h5 class="card-title">@auction.State</h5>
-                    <button id="btnSubmit" class="btn btn-primary btn-sm" data-target="#myModal" data-toggle="modal" data-auctionId="@auction.Id"  >Bid</button>    
+                    @if(auction.State.Contains("OPEN"))
+                    {
+                        <button id="btnSubmit" class="btn btn-primary btn-sm" data-target="#myModal" data-toggle="modal">Bid</button>
+                    }
+                    else
+                    {
+                        <button id="btnSubmit" class="btn btn-primary btn-sm disabled" data-target="#myModal" data-toggle="modal" disabled>Bid</button>
+                    }
+
+                    @*<input class="btn btn-primary btn-sm" type="button" title="Bid" value="Bid2" data-target="#myModal" data-toggle="modal" disabled=""/>*@
                     @*@Html.ActionLink("Bid", "ModalAction", "Home", new { auctionId = auction.Id, auctionName = auction.Name, auctionPriceNow = auction.PriceNow }, new { data_target = "#myModal", data_toggle = "modal" })*@
                     @*<input type="button" 
                            title="Bid" 
