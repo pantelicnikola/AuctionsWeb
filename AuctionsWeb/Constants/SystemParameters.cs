@@ -10,6 +10,8 @@ namespace AuctionsWeb.Constants
     {
         public static int DEFAULT_NUMBER_AUCTIONS { get; private set; } = 10;
 
+        public static int TOKEN_VALUE { get; set; } = 10;
+
         [Authorize(Roles = "admin")] // zasto ovo ne radi???????
         public static void setDEFAULT_NUMBER_AUCTIONS(int value)
         {

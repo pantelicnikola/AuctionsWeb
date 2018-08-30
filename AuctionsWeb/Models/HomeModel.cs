@@ -51,19 +51,19 @@ namespace AuctionsWeb.Models
 
         public string AuctionName { get; set; }
 
-        [Display(Name = "Last Bid")]
-        public decimal? LastBid { get; set; }
+        [Display(Name = "Price Now")]
+        public decimal? PriceNow { get; set; }
 
-        [Display(Name = "New Bid")]
-        public decimal NewBid { get; set; }
+        [Display(Name = "Bid Amount")]
+        public int BidAmount { get; set; }
 
         public BidModalModel() { }
 
-        public BidModalModel(int auctionId, string auctionName, decimal? lastBid)
+        public BidModalModel(int auctionId, string auctionName, decimal? priceNow)
         {
             AuctionId = auctionId;
             AuctionName = auctionName;
-            LastBid = lastBid;
+            PriceNow = priceNow;
         }
     }
 

@@ -169,7 +169,7 @@ namespace AuctionsWeb.Controllers
             {
                 AuctionId = auctionId,
                 AuctionName = auctionName,
-                LastBid = auctionPriceNow
+                PriceNow = auctionPriceNow
             });
         }
 
@@ -177,27 +177,41 @@ namespace AuctionsWeb.Controllers
         [Authorize]
         public ActionResult CreateBid(BidModalModel model)
         {
-            if (model.NewBid > model.LastBid)
-            {
-                var bid = new Bid()
-                {
-                    IdUser = User.Identity.GetUserId(),
-                    IdAuction = model.AuctionId,
-                    Amount = model.NewBid,
-                    Time = System.DateTime.Now
-                };
+            var db = new auctiondbEntities();
 
-                using (var db = new auctiondbEntities())
+            var user = db.AspNetUsers.Find(User.Identity.GetUserId());
+            
+            if (model.BidAmount > 0)
+            {
+                if (user.NumTokens >= model.BidAmount)
                 {
+                    var bid = new Bid()
+                    {
+                        IdUser = User.Identity.GetUserId(),
+                        IdAuction = model.AuctionId,
+                        Amount = model.BidAmount,
+                        Time = System.DateTime.Now
+                    };
+
+                
                     db.Bids.Add(bid);
                     var auction = db.Auctions.Where(a => a.Id == model.AuctionId).First();
-                    auction.PriceNow = model.NewBid;
-                    db.SaveChanges();
-                }
-            }
-            else
-            {
+                    auction.PriceNow += model.BidAmount * SystemParameters.TOKEN_VALUE;
 
+                    user.NumTokens -= model.BidAmount;
+
+
+                    db.SaveChanges();
+
+
+                } else
+                {
+                    ViewBag.Message = "Insufficient number of tokens";
+                }
+                
+            } else
+            {
+                ViewBag.Message = "Your bid amount must be a positive number";
             }
             return View("Search");
         }
