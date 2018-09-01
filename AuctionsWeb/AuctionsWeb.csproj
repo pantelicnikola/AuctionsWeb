@@ -433,6 +433,8 @@
     <Content Include="Views\Home\Auction.cshtml" />
     <Content Include="Views\Shared\Cards.cshtml" />
     <Content Include="Views\Shared\BidModal.cshtml" />
+    <Content Include="Views\UserFunctionalities\ShopTokens.cshtml" />
+    <Content Include="Views\UserFunctionalities\PurchaseTokens.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

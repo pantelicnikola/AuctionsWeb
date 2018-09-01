@@ -163,13 +163,14 @@ namespace AuctionsWeb.Controllers
             return View(model);
         }
 
-        public ActionResult ModalAction(int auctionId, string auctionName, decimal auctionPriceNow)
+        public ActionResult ModalAction(int auctionId, string auctionName, decimal auctionPriceNow, DateTime endTime)
         {
             return PartialView("BidModal", new BidModalModel
             {
                 AuctionId = auctionId,
                 AuctionName = auctionName,
-                PriceNow = auctionPriceNow
+                PriceNow = auctionPriceNow,
+                TimeEnd = endTime
             });
         }
 
@@ -185,6 +186,10 @@ namespace AuctionsWeb.Controllers
             {
                 if (user.NumTokens >= model.BidAmount)
                 {
+                    if (model.TimeEnd < DateTime.Now)
+                    {
+                        ViewBag.ErrorMessage = "This auction has just finished";
+                    }
                     var bid = new Bid()
                     {
                         IdUser = User.Identity.GetUserId(),
@@ -200,18 +205,17 @@ namespace AuctionsWeb.Controllers
 
                     user.NumTokens -= model.BidAmount;
 
-
                     db.SaveChanges();
 
 
                 } else
                 {
-                    ViewBag.Message = "Insufficient number of tokens";
+                    ViewBag.ErrorMessage = "Insufficient number of tokens";
                 }
                 
             } else
             {
-                ViewBag.Message = "Your bid amount must be a positive number";
+                ViewBag.ErrorMessage = "Your bid amount must be a positive number";
             }
             return View("Search");
         }

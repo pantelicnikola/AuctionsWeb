@@ -11,4 +11,18 @@ namespace AuctionsWeb.Enums
         OPEN,
         CLOSED
     }
+
+    public enum Currencies
+    {
+        DIN,
+        EUR,
+        USD
+    }
+
+    public enum OrderStates
+    {
+        SUBMITTED,
+        COMPLETED,
+        CANCELED
+    }
 }

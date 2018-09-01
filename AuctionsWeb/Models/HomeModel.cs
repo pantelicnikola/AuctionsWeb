@@ -51,6 +51,8 @@ namespace AuctionsWeb.Models
 
         public string AuctionName { get; set; }
 
+        public DateTime? TimeEnd { get; set; }
+
         [Display(Name = "Price Now")]
         public decimal? PriceNow { get; set; }
 
@@ -59,11 +61,12 @@ namespace AuctionsWeb.Models
 
         public BidModalModel() { }
 
-        public BidModalModel(int auctionId, string auctionName, decimal? priceNow)
+        public BidModalModel(int auctionId, string auctionName, decimal? priceNow, DateTime? endTime)
         {
             AuctionId = auctionId;
             AuctionName = auctionName;
             PriceNow = priceNow;
+            TimeEnd = endTime;
         }
     }
 

@@ -6,7 +6,8 @@ using System.Web;
 using System.Web.Mvc;
 using AuctionsWeb.Models;
 using Microsoft.AspNet.Identity;
-
+using AuctionsWeb.Constants;
+using AuctionsWeb.Enums;
 
 namespace AuctionsWeb.Controllers
 {
@@ -41,6 +42,59 @@ namespace AuctionsWeb.Controllers
             
             return Redirect("/");
 
+        }
+
+        
+        public ActionResult ShopTokens()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ShopTokens(ShopTokensModel model)
+        {
+            if (model.NumTokens == 0)
+            {
+                ViewBag.ErrorMessage = "Choose one of three token packages";
+                return View();
+            }
+            TempData["ShopTokenInfo"] = new ShopTokensModel(model.Currency, model.NumTokens);
+            return Redirect("PurchaseTokens");
+        }
+
+        public ActionResult PurchaseTokens()
+        {
+            var db = new auctiondbEntities();
+            var user = db.AspNetUsers.Find(User.Identity.GetUserId());
+            ShopTokensModel shopTokenInfo = TempData["ShopTokenInfo"] as ShopTokensModel;
+            PurchaseTokensModel model = new PurchaseTokensModel()
+            {
+                Currency = shopTokenInfo.Currency,
+                NumTokens = shopTokenInfo.NumTokens,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                TotalPrice = shopTokenInfo.NumTokens * AuctionsWeb.Constants.SystemParameters.TOKEN_VALUE
+            };
+            TempData["PurchaseTokensModel"] = model;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> PurchaseTokens(PurchaseTokensModel modele)
+        {
+            var db = new auctiondbEntities();
+            PurchaseTokensModel model = TempData["PurchaseTokensModel"] as PurchaseTokensModel;
+            var order = new Order()
+            {
+                IdUser = User.Identity.GetUserId(),
+                NumTokens = model.NumTokens,
+                Price = model.TotalPrice,
+                State = OrderStates.SUBMITTED.ToString()
+            };
+            db.Orders.Add(order);
+            await db.SaveChangesAsync();
+            return Redirect("/");
         }
     }
 }

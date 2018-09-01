@@ -49,7 +49,7 @@
         <div id="myModal" class="modal fade hidden-print" tabindex="-1" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content"> 
-                    @Html.Partial("BidModal", new AuctionsWeb.Models.BidModalModel(auction.Id, auction.Name, auction.PriceNow))
+                    @Html.Partial("BidModal", new AuctionsWeb.Models.BidModalModel(auction.Id, auction.Name, auction.PriceNow, auction.TimeEnd))
                 </div>
             </div>
         </div>
