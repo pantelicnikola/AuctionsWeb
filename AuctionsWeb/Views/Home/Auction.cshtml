@@ -1,45 +1,52 @@
 ﻿@model AuctionsWeb.Models.AuctionViewModel
 
-@*@Html.Partial("Card", Model.Auction)
 
-Bids:*@
+<div class="row" >
 
-@*@foreach(var bid in Model.Auction.Bids)
-{
-    <p>@bid.Amount</p>
-    <p>@bid.Time</p>
-   
-}*@
-
-<div class="row">
-    
     @Html.Partial("Card", Model.Auction)
-    
+
     <div class="col m-md-4">
         <div class="container">
-
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">Auction Name</th>
-                        <th scope="col">UserName</th>
-                        <th scope="col">Time of Bid</th>
-                        <th scope="col">Amount [&#36;]</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var bid in Model.Auction.Bids)
-                    {
-                        <tr>
-                            <td>@bid.Auction.Name</td>
-                            <td>@bid.AspNetUser.UserName</td>
-                            <td>@bid.Time</td>
-                            <td>@bid.Amount</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <div id="resultDiv"></div>
         </div>
 
     </div>
 </div>
+
+@section Scripts{
+    <script src="~/Scripts/jquery.signalR-2.3.0.min.js"></script>
+    <script src="~/SignalR/hubs"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var notifications = $.connection.myHub;
+            notifications.client.displayStatus = function () {
+                console.log("triggered");
+                getData();
+            };
+
+            $.connection.hub.start().done(function () {
+                console.log("connection started");
+                getData();
+            }).fail(function(error) {
+                alert(error)
+            });
+        });
+
+        function getData() {
+            console.log("getData() called");
+            var model = $('#resultDiv');
+            $.ajax({
+                url: '/Home/InflateTable',
+                data: 'idAuction=1',
+                contentType: 'application/html ; charset:utf-8',
+                type: 'GET',
+                dataType: 'html',
+                success: function (data) {
+                    model.empty().append(data);
+                }
+            });
+        }
+    </script>
+
+}

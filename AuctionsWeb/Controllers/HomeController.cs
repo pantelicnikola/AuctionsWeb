@@ -154,13 +154,26 @@ namespace AuctionsWeb.Controllers
             }
         }
 
+        //public ActionResult Auction(int id)
+        //{
+        //    return AuctionKurac(id);
+        //}
+
         public ActionResult Auction(int id)
         {
             AuctionViewModel model = new AuctionViewModel();
             var entity = new auctiondbEntities();
             model.Auction =  entity.Auctions.Single<Auction>(a => a.Id.Equals(id));
-
+            addDependency(entity.Bids.ToString());
             return View(model);
+        }
+
+        public ActionResult InflateTable(int idAuction)
+        {
+            var entity = new auctiondbEntities();
+            ICollection<Bid> bids = entity.Auctions.Single(a => a.Id.Equals(idAuction)).Bids;
+
+            return PartialView("AuctionTable", bids);
         }
 
         public ActionResult ModalAction(int auctionId, string auctionName, decimal auctionPriceNow, DateTime endTime)

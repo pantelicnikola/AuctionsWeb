@@ -11,5 +11,6 @@ namespace AuctionsWeb.Views.MyHub
             IHubContext context = GlobalHost.ConnectionManager.GetHubContext<MyHub>();
             context.Clients.All.displayStatus();
         }
+        
     }
 }
