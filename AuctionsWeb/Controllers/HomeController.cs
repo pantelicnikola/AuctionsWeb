@@ -75,13 +75,9 @@ namespace AuctionsWeb.Controllers
 
         }
 
-         
-
-
         public ActionResult InflateCards()
         {
             var auctionsList = new List<Auction>();
-            string commandText = null;
             
             var entity = new auctiondbEntities();
             var auctions = entity.Auctions.AsQueryable();
@@ -122,7 +118,6 @@ namespace AuctionsWeb.Controllers
                 auctions = auctions.Where(a => a.State.Equals(AuctionStates.OPEN.ToString())).OrderBy(a => a.TimeOpen).Take(SystemParameters.DEFAULT_NUMBER_AUCTIONS);
             }
 
-            commandText = auctions.ToString();
             auctionsList = auctions.ToList();
             addDependency(entity.Auctions.ToString());
 
@@ -164,7 +159,6 @@ namespace AuctionsWeb.Controllers
             AuctionViewModel model = new AuctionViewModel();
             var entity = new auctiondbEntities();
             model.Auction =  entity.Auctions.Single<Auction>(a => a.Id.Equals(id));
-            addDependency(entity.Bids.ToString());
             return View(model);
         }
 
@@ -172,8 +166,19 @@ namespace AuctionsWeb.Controllers
         {
             var entity = new auctiondbEntities();
             ICollection<Bid> bids = entity.Auctions.Single(a => a.Id.Equals(idAuction)).Bids;
+            addDependency(entity.Bids.ToString());
 
             return PartialView("AuctionTable", bids);
+        }
+
+        public ActionResult InflateCard(int idAuction)
+        {
+            var entity = new auctiondbEntities();
+            var auction = entity.Auctions.Single(a => a.Id == idAuction);
+            var auctionList = new List<Auction>();
+            auctionList.Add(auction);
+            addDependency(entity.Auctions.ToString());
+            return PartialView("Card", auction);
         }
 
         public ActionResult ModalAction(int auctionId, string auctionName, decimal auctionPriceNow, DateTime endTime)

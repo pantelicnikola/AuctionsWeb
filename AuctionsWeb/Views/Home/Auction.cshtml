@@ -1,9 +1,16 @@
 ﻿@model AuctionsWeb.Models.AuctionViewModel
 
+@Html.HiddenFor(model => model.Auction.Id, new { id = "FieldId" })
 
-<div class="row" >
+<div class="row">
 
-    @Html.Partial("Card", Model.Auction)
+    <div class="col m-md-4">
+        <div class="container">
+            <div id="auctionCard"></div>
+        </div>
+
+    </div>
+    @*@Html.Partial("Card", Model.Auction)*@
 
     <div class="col m-md-4">
         <div class="container">
@@ -23,22 +30,41 @@
             notifications.client.displayStatus = function () {
                 console.log("triggered");
                 getData();
+                getMoreData();
             };
 
             $.connection.hub.start().done(function () {
                 console.log("connection started");
                 getData();
+                getMoreData();
             }).fail(function(error) {
                 alert(error)
             });
         });
 
         function getData() {
+            var id = $('#FieldId').val()
             console.log("getData() called");
             var model = $('#resultDiv');
             $.ajax({
                 url: '/Home/InflateTable',
-                data: 'idAuction=1',
+                data: 'idAuction=' + id,
+                contentType: 'application/html ; charset:utf-8',
+                type: 'GET',
+                dataType: 'html',
+                success: function (data) {
+                    model.empty().append(data);
+                }
+            });
+        }
+
+        function getMoreData() {
+            var id = $('#FieldId').val()
+            console.log("getData() called");
+            var model = $('#auctionCard');
+            $.ajax({
+                url: '/Home/InflateCard',
+                data: 'idAuction=' + id,
                 contentType: 'application/html ; charset:utf-8',
                 type: 'GET',
                 dataType: 'html',
