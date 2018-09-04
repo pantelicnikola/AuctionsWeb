@@ -30,16 +30,22 @@
                         @*@Html.Partial("Timer", auction)*@
 
                         @{
-                            TimeSpan timeLeft = TimeSpan.Zero;
-                            if (auction.State.Contains("OPEN"))
-                            {
-                                var tl = auction.TimeEnd - DateTime.Now;
-                                timeLeft = (TimeSpan)tl;
+
+                            const f = (auction) => {
+                                TimeSpan timeLeft = TimeSpan.Zero;
+                                if (auction.State.Contains("OPEN"))
+                                {
+                                    var tl = auction.TimeEnd - DateTime.Now;
+                                    timeLeft = (TimeSpan)tl;
+                                }
+                                else if (auction.State.Contains("READY"))
+                                {
+                                    timeLeft = TimeSpan.FromSeconds((long)auction.Duration);
+                                }
                             }
-                            else if (auction.State.Contains("READY"))
-                            {
-                                timeLeft = TimeSpan.FromSeconds((long)auction.Duration);
-                            }
+
+                            setInterval(f, 1000);
+                            
                         }
 
                         @timeLeft
