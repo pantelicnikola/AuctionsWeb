@@ -34,7 +34,7 @@
                             Task.Run(async (auction) => {
                                 for(;;)
                                 {
-                                    await Task.Delay(1000)
+                                    await Task.Delay(1000);
                                     TimeSpan timeLeft = TimeSpan.Zero;
                                     if (auction.State.Contains("OPEN"))
                                     {
