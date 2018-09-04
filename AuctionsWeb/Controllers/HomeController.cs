@@ -238,5 +238,12 @@ namespace AuctionsWeb.Controllers
             return View("Search");
         }
 
+        public ActionResult InflateTimer()
+        {
+            return null;
+        }
+
     }
+
+    
 }

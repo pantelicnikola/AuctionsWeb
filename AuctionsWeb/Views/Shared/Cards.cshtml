@@ -1,6 +1,8 @@
 ﻿@model List<Auction>
 
-
+@{ 
+    var djoka = 0;
+}
 <div class="card-deck">
     @foreach (var auction in Model)
     {
@@ -22,23 +24,68 @@
                     <p class="card-text">@auction.PriceNow</p>
                     <p class="card-text">@lastBidder</p>
                     <h5 class="card-title">@auction.State</h5>
-                    @if(auction.State.Contains("OPEN"))
+                    
+
+                    <div id="timerDiv">
+                        @*@Html.Partial("Timer", auction)*@
+
+                        @{
+                            TimeSpan timeLeft = TimeSpan.Zero;
+                            if (auction.State.Contains("OPEN"))
+                            {
+                                var tl = auction.TimeEnd - DateTime.Now;
+                                timeLeft = (TimeSpan)tl;
+                            }
+                            else if (auction.State.Contains("READY"))
+                            {
+                                timeLeft = TimeSpan.FromSeconds((long)auction.Duration);
+                            }
+                        }
+
+                        @timeLeft
+                    </div>
+
+                    @if (auction.State.Contains("OPEN"))
                     {
                         <button id="btnSubmit" class="btn btn-primary btn-sm" data-target="#myModal" data-toggle="modal">Bid</button>
+                        @*@using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                        {
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(m => m, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Search" class="btn btn-default" />
+                                </div>
+                            </div>
+                        }*@
+                        @*@using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+
+                                Html.ActionLink("Bid", "Auction", "Home", new { Id = auction.Id, TimeEnd = auction.TimeEnd, Amount = Request["BidAmount"] }, null)
+                                <input type="text" placeholder="Bid Amount" name="BidAmount" />
+
+                        }*@
+                        @*<input type="text" value="Search" class="btn btn-default" />*@
+
                     }
                     else
                     {
-                        <button id="btnSubmit" class="btn btn-primary btn-sm disabled" data-target="#myModal" data-toggle="modal" disabled>Bid</button>
+                        <button id = "btnSubmit" class="btn btn-primary btn-sm disabled" data-target="#myModal" data-toggle="modal" disabled>Bid</button>
                     }
 
-                    @*<input class="btn btn-primary btn-sm" type="button" title="Bid" value="Bid2" data-target="#myModal" data-toggle="modal" disabled=""/>*@
+                            @*<input class="btn btn-primary btn-sm" type="button" title="Bid" value="Bid2" data-target="#myModal" data-toggle="modal" disabled=""/>*@
                     @*@Html.ActionLink("Bid", "ModalAction", "Home", new { auctionId = auction.Id, auctionName = auction.Name, auctionPriceNow = auction.PriceNow }, new { data_target = "#myModal", data_toggle = "modal" })*@
-                    @*<input type="button" 
-                           title="Bid" 
-                           value="Bid" 
-                           onclick="location.href='@Url.Action("ModalAction", "Home", new { auctionId = auction.Id, auctionName = auction.Name, auctionPriceNow = auction.PriceNow })'"  
-                           data-target="#myModal" 
-                           data-toggle="modal" />*@    
+                    @*<input type="button"
+                        title="Bid"
+                        value="Bid"
+                        onclick="location.href='@Url.Action("ModalAction", "Home", new { auctionId = auction.Id, auctionName = auction.Name, auctionPriceNow = auction.PriceNow })'"
+                        data-target="#myModal"
+                        data-toggle="modal" />*@
                 </div>
                 <div class="card-footer">
                     <small class="text-muted">@DateTime.Now.ToShortTimeString()</small>

@@ -83,6 +83,7 @@
             $.connection.hub.start().done(function () {
                 console.log("connection started");
                 getData();
+                setInterval(tick, 1000);
             }).fail(function(error) {
                 alert(error)
             });
@@ -101,6 +102,11 @@
                 }
             });
         }
+
+        function tick() {
+            $("#timerDiv").load("/Home/Search #timerDiv");
+        }
+
     </script>
 
 }

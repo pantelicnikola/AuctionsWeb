@@ -436,6 +436,7 @@
     <Content Include="Views\UserFunctionalities\ShopTokens.cshtml" />
     <Content Include="Views\UserFunctionalities\PurchaseTokens.cshtml" />
     <Content Include="Views\Shared\AuctionTable.cshtml" />
+    <Content Include="Views\Shared\Timer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

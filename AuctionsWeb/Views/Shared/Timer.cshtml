@@ -1,0 +1,6 @@
+﻿@model Auction
+
+@{
+    var remaining = Model.TimeEnd - DateTime.Now;
+}
+<h5>@remaining</h5>
