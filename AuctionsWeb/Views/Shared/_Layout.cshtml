@@ -24,6 +24,7 @@
                             @Html.ActionLink("Search", "Search", "Home")
                         </div>
                     </li>
+
                     @if (Request.IsAuthenticated)
                     {
                         if (User.IsInRole("admin"))
@@ -31,6 +32,11 @@
                             <li>
                                 <div class="nav-link">
                                     @Html.ActionLink("OpenAuctions", "OpenAuctions", "AdminFunctionalities")
+                                </div>
+                            </li>
+                            <li>
+                                <div class="nav-link">
+                                    @Html.ActionLink("ApproveTokens", "ApproveTokens", "AdminFunctionalities")
                                 </div>
                             </li>
                         }
@@ -44,6 +50,11 @@
                             <li>
                                 <div class="nav-link">
                                     @Html.ActionLink("ShopTokens", "ShopTokens", "UserFunctionalities")
+                                </div>
+                            </li>
+                            <li>
+                                <div class="nav-link">
+                                    @Html.ActionLink("Orders", "Orders", "UserFunctionalities")
                                 </div>
                             </li>
                         }

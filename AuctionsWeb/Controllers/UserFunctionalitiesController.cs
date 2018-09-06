@@ -98,5 +98,14 @@ namespace AuctionsWeb.Controllers
             await db.SaveChangesAsync();
             return Redirect("/");
         }
+
+        public ActionResult Orders()
+        {
+            var db = new auctiondbEntities();
+            var id = User.Identity.GetUserId();
+            var user = db.AspNetUsers.First(u => u.Id == id);
+            var orders = user.Orders;
+            return View(orders);
+        }
     }
 }
