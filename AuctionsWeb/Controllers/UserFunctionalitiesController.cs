@@ -84,6 +84,7 @@ namespace AuctionsWeb.Controllers
         public async Task<ActionResult> PurchaseTokens(PurchaseTokensModel modele)
         {
             var db = new auctiondbEntities();
+            var user = db.AspNetUsers.Find(User.Identity.GetUserId());
             PurchaseTokensModel model = TempData["PurchaseTokensModel"] as PurchaseTokensModel;
             var order = new Order()
             {
@@ -93,6 +94,7 @@ namespace AuctionsWeb.Controllers
                 State = OrderStates.SUBMITTED.ToString()
             };
             db.Orders.Add(order);
+            user.NumTokens += model.NumTokens;
             await db.SaveChangesAsync();
             return Redirect("/");
         }

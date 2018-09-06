@@ -21,6 +21,7 @@ namespace AuctionsWeb.Controllers
 
         public IQueryable globalQuery { get; set; }
         public List<Auction> list { get; set; }
+        public int auctionID { get; set; } = 0;
 
         public ActionResult Index()
         {
@@ -181,15 +182,16 @@ namespace AuctionsWeb.Controllers
             return PartialView("Card", auction);
         }
 
-        public ActionResult ModalAction(int auctionId, string auctionName, decimal auctionPriceNow, DateTime endTime)
+        [HttpGet]
+        public void ModalAction(int auctionId)
         {
-            return PartialView("BidModal", new BidModalModel
-            {
-                AuctionId = auctionId,
-                AuctionName = auctionName,
-                PriceNow = auctionPriceNow,
-                TimeEnd = endTime
-            });
+            auctionID = auctionId;
+            TempData["auctionId"] = auctionId;
+            ViewBag.selectedId = "" + auctionId;
+            HttpCookie aCookie = new HttpCookie("selectedAuction");
+            aCookie.Value = "" + auctionId;
+            Response.Cookies.Add(aCookie);
+
         }
 
         [HttpPost]
@@ -199,26 +201,28 @@ namespace AuctionsWeb.Controllers
             var db = new auctiondbEntities();
 
             var user = db.AspNetUsers.Find(User.Identity.GetUserId());
-            
+            var auctionId = (int)TempData["auctionId"];
+            var auction = db.Auctions.First(a => a.Id == auctionId);
+
+
             if (model.BidAmount > 0)
             {
                 if (user.NumTokens >= model.BidAmount)
                 {
-                    if (model.TimeEnd < DateTime.Now)
-                    {
-                        ViewBag.ErrorMessage = "This auction has just finished";
-                    }
+                    //if (auction.TimeEnd < DateTime.Now)
+                    //{
+                    //    ViewBag.ErrorMessage = "This auction has just finished";
+                    //}
                     var bid = new Bid()
                     {
                         IdUser = User.Identity.GetUserId(),
-                        IdAuction = model.AuctionId,
+                        IdAuction = auctionId,
                         Amount = model.BidAmount,
                         Time = System.DateTime.Now
                     };
 
                 
                     db.Bids.Add(bid);
-                    var auction = db.Auctions.Where(a => a.Id == model.AuctionId).First();
                     auction.PriceNow += model.BidAmount * SystemParameters.TOKEN_VALUE;
 
                     user.NumTokens -= model.BidAmount;

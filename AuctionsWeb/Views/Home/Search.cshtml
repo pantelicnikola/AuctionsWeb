@@ -1,12 +1,11 @@
 ﻿@model AuctionsWeb.Models.SearchViewModel
 
-
 @{
     ViewBag.Title = "Search";
-    //ViewBag.Message = "";
+    TempData["auctionId"] = null;
+
 }
 <h2>@ViewBag.Title.</h2>
-@*<h3>@ViewBag.Message</h3>*@
 <p class="text-danger">@ViewBag.ErrorMessage</p>
 
 
@@ -67,12 +66,22 @@
 
 <div id="resultDiv"></div>
 
+<div id="myModal" class="modal fade hidden-print" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @Html.Partial("BidModal");
+        </div>
+    </div>
+</div>
+
+
 
 @section Scripts{
     <script src="~/Scripts/jquery.signalR-2.3.0.min.js"></script>
     <script src="~/SignalR/hubs"></script>
 
     <script type="text/javascript">
+        var auctions;
         $(function () {
             var notifications = $.connection.myHub;
             notifications.client.displayStatus = function () {
@@ -82,8 +91,7 @@
 
             $.connection.hub.start().done(function () {
                 console.log("connection started");
-                getData();
-                setInterval(tick, 1000);
+                setInterval(getData, 1000);
             }).fail(function(error) {
                 alert(error)
             });
@@ -102,12 +110,6 @@
                 }
             });
         }
-
-        function tick() {
-            $("#timerDiv").load("/Home/Search #timerDiv");
-        }
-
     </script>
-
 }
 

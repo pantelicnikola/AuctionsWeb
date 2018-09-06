@@ -47,27 +47,13 @@ namespace AuctionsWeb.Models
 
     public class BidModalModel
     {
-        public int AuctionId { get; set; }
-
-        public string AuctionName { get; set; }
-
-        public DateTime? TimeEnd { get; set; }
-
-        [Display(Name = "Price Now")]
-        public decimal? PriceNow { get; set; }
-
+        
         [Display(Name = "Bid Amount")]
         public int BidAmount { get; set; }
 
         public BidModalModel() { }
+        
 
-        public BidModalModel(int auctionId, string auctionName, decimal? priceNow, DateTime? endTime)
-        {
-            AuctionId = auctionId;
-            AuctionName = auctionName;
-            PriceNow = priceNow;
-            TimeEnd = endTime;
-        }
     }
 
 }
