@@ -20,6 +20,7 @@
         <AssociationConnector Association="auctiondbModel.FK_Order_AspNetUsers" ManuallyRouted="false" />
         <AssociationConnector Association="auctiondbModel.FK_Bid_Auction" ManuallyRouted="false" />
         <AssociationConnector Association="auctiondbModel.AspNetUserRoles" ManuallyRouted="false" />
+        <AssociationConnector Association="auctiondbModel.FK_Auction_AspNetUsers1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

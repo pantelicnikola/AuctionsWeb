@@ -32,9 +32,12 @@ namespace AuctionsWeb
         public Nullable<System.DateTime> TimeOpen { get; set; }
         public Nullable<System.DateTime> TimeEnd { get; set; }
         public string State { get; set; }
+        public string Winner { get; set; }
+        public Nullable<int> TotalTokens { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Bid> Bids { get; set; }
+        public virtual AspNetUser AspNetUser1 { get; set; }
     }
 }

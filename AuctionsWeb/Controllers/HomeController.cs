@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using AuctionsWeb.Models;
 using AuctionsWeb.Enums;
@@ -80,8 +79,8 @@ namespace AuctionsWeb.Controllers
         {
             var auctionsList = new List<Auction>();
             
-            var entity = new auctiondbEntities();
-            var auctions = entity.Auctions.AsQueryable();
+            var db = new auctiondbEntities();
+            var auctions = db.Auctions.AsQueryable();
             var cookieValues = Request.Cookies["searchInfo"].Values;
 
             if (!(Server.HtmlEncode(cookieValues["name"]) == ""))
@@ -114,17 +113,32 @@ namespace AuctionsWeb.Controllers
                 string asd = Server.HtmlEncode(cookieValues["state"]);
                 auctions = auctions.Where(a => a.State.Equals(asd));
             }
-            if (auctions.Equals(entity.Auctions))
+            if (auctions.Equals(db.Auctions))
             {
-                auctions = auctions.Where(a => a.State.Equals(AuctionStates.OPEN.ToString())).OrderBy(a => a.TimeOpen).Take(SystemParameters.DEFAULT_NUMBER_AUCTIONS);
+                auctions = auctions.Where(a => a.State.Equals(AuctionStates.OPEN.ToString())).OrderByDescending(a => a.TimeOpen).Take(SystemParameters.DEFAULT_NUMBER_AUCTIONS);
             }
 
             auctionsList = auctions.ToList();
-            addDependency(entity.Auctions.ToString());
+            foreach (var auction in auctionsList)
+            {
+                if (auction.State.Contains(AuctionStates.OPEN.ToString()) && auction.TimeEnd < DateTime.Now)
+                {
+                    auction.State = AuctionStates.CLOSED.ToString();
+                    var bids = auction.Bids.OrderByDescending(b => b.Time);
+                    if (bids.Any())
+                    {
+                        var winner = bids.First().AspNetUser;
+                        auction.Winner = winner.Id;
+                        auction.PriceEnd = auction.PriceNow;
+                        winner.NumTokens -= auction.TotalTokens;
+                    }
+                    db.SaveChanges();
+                }
+            }
+            addDependency(db.Auctions.ToString());
 
             return PartialView("Cards", auctionsList);
         }
-
 
         public void addDependency(string commandText)
         {
@@ -149,11 +163,6 @@ namespace AuctionsWeb.Controllers
                 }
             }
         }
-
-        //public ActionResult Auction(int id)
-        //{
-        //    return AuctionKurac(id);
-        //}
 
         public ActionResult Auction(int id)
         {
@@ -209,10 +218,10 @@ namespace AuctionsWeb.Controllers
             {
                 if (user.NumTokens >= model.BidAmount)
                 {
-                    //if (auction.TimeEnd < DateTime.Now)
-                    //{
-                    //    ViewBag.ErrorMessage = "This auction has just finished";
-                    //}
+                    if (auction.TimeEnd < DateTime.Now)
+                    {
+                        ViewBag.ErrorMessage = "This auction has just finished";
+                    }
                     var bid = new Bid()
                     {
                         IdUser = User.Identity.GetUserId(),
@@ -220,21 +229,17 @@ namespace AuctionsWeb.Controllers
                         Amount = model.BidAmount,
                         Time = System.DateTime.Now
                     };
-
                 
                     db.Bids.Add(bid);
                     auction.PriceNow += model.BidAmount * SystemParameters.TOKEN_VALUE;
-
-                    user.NumTokens -= model.BidAmount;
+                    auction.TotalTokens += model.BidAmount;
 
                     db.SaveChanges();
-
 
                 } else
                 {
                     ViewBag.ErrorMessage = "Insufficient number of tokens";
                 }
-                
             } else
             {
                 ViewBag.ErrorMessage = "Your bid amount must be a positive number";

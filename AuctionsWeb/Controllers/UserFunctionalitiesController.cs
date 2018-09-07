@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using AuctionsWeb.Models;
 using Microsoft.AspNet.Identity;
-using AuctionsWeb.Constants;
 using AuctionsWeb.Enums;
+using System.Collections.Generic;
 
 namespace AuctionsWeb.Controllers
 {
@@ -24,24 +21,26 @@ namespace AuctionsWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateAuction(CreateAuctionModel model)
         {
-            var auction = new Auction {
-                IdUser = User.Identity.GetUserId(),
-                Name = model.AuctionName,
-                Duration = model.Duration,
-                Photo = model.PhotoURL,
-                PriceStart = model.PriceStart,
-                PriceNow = model.PriceStart,
-                State = "READY",
-                TimeCreate = System.DateTime.Now
-            };
+            if (ModelState.IsValid)
+            {
+                var auction = new Auction {
+                    IdUser = User.Identity.GetUserId(),
+                    Name = model.AuctionName,
+                    Duration = model.Duration,
+                    Photo = model.PhotoURL,
+                    PriceStart = model.PriceStart,
+                    PriceNow = model.PriceStart,
+                    State = "READY",
+                    TimeCreate = System.DateTime.Now,
+                    TotalTokens = 0
+                };
 
-            var entity = new auctiondbEntities();
-            entity.Auctions.Add(auction);
-            await entity.SaveChangesAsync();
-
-            
-            return Redirect("/");
-
+                var entity = new auctiondbEntities();
+                entity.Auctions.Add(auction);
+                await entity.SaveChangesAsync();
+                return Redirect("/");
+            } 
+            return View();
         }
 
         
@@ -105,6 +104,29 @@ namespace AuctionsWeb.Controllers
             var user = db.AspNetUsers.First(u => u.Id == id);
             var orders = user.Orders;
             return View(orders);
+        }
+
+        public ActionResult WonAuctions()
+        {
+            var model = new WonAuctionsModel();
+            model.auctions = new List<Auction>();
+            var db = new auctiondbEntities();
+            var userId = User.Identity.GetUserId();
+            var auctions = db.Auctions;
+            foreach (var auction in auctions)
+            {
+                if (auction.Winner == userId)
+                {
+                    model.auctions.Add(auction);
+                }
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult WonAuctions(int idAuction)
+        {
+            return Redirect("/Home/Auction/" + idAuction);
         }
     }
 }
