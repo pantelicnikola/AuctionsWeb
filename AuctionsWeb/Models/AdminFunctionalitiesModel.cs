@@ -10,4 +10,9 @@ namespace AuctionsWeb.Models
     {
         public List<Auction> auctions { get; set; } 
     }
+
+    public class ApproveTokensModel
+    {
+        public List<Order> orders { get; set; }
+    }
 }

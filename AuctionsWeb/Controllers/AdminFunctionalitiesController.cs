@@ -1,19 +1,15 @@
-﻿
-
-using AuctionsWeb.Models;
+﻿using AuctionsWeb.Models;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Mvc;
+using AuctionsWeb.Enums;
+using System.Collections.Generic;
+using System;
 
 namespace AuctionsWeb.Controllers
 {
     [Authorize(Roles = "admin")]
     public class AdminFunctionalitiesController : Controller
     {
-        //List<Auction> list;
-
-
-        // GET: UserFunctionalities
         [HttpGet]
         public ActionResult OpenAuctions(OpenAuctionsModel model)
         {
@@ -23,31 +19,46 @@ namespace AuctionsWeb.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //public ActionResult OpenAuctions(OpenAuctionsModel model)
-        //{
-        //    auctiondbEntities entities = new auctiondbEntities();
-        //    entities.Auctions.Remove(model.toAdd);
-        //    entities.SaveChanges();
-        //    return null;
-        //}
-
-        public ActionResult Add(int id, int duration)
+        public ActionResult Add(int id)
         {
+            auctiondbEntities db = new auctiondbEntities();
+            var auction = db.Auctions.First(a => a.Id == id);
+            auction.State = AuctionStates.OPEN.ToString();
+            auction.TimeOpen = DateTime.Now;
+            auction.TimeEnd = DateTime.Now.AddSeconds((int)auction.Duration);
+            db.SaveChanges();
 
-            auctiondbEntities context = new auctiondbEntities();
-            System.DateTime timeOpen = System.DateTime.Now;
-            System.DateTime timeEnd = timeOpen.AddSeconds(duration);
-            Auction auction = new Auction { Id = id, TimeOpen = timeOpen, TimeEnd = timeEnd};
-            auction.State = "OPEN";
-
-            context.Auctions.Attach(auction);
-             
-            context.Entry<Auction>(auction).Property("State").IsModified = true;
-            context.Entry<Auction>(auction).Property("TimeOpen").IsModified = true;
-            context.Entry<Auction>(auction).Property("TimeEnd").IsModified = true;
-            context.SaveChanges();
             return RedirectToAction("OpenAuctions");
+        }
+
+        public ActionResult ApproveTokens()
+        {
+            var model = new ApproveTokensModel();
+            auctiondbEntities db = new auctiondbEntities();
+            List<Order> orders = db.Orders.Where(o => o.State == OrderStates.SUBMITTED.ToString()).ToList();
+            model.orders = orders;
+            return View(model);
+
+        }
+
+        public ActionResult Approve(int id)
+        {
+            auctiondbEntities db = new auctiondbEntities();
+            var order = db.Orders.First(o => o.Id == id);
+            order.State = OrderStates.COMPLETED.ToString();
+            order.AspNetUser.NumTokens += order.NumTokens;
+            db.SaveChanges();
+            return RedirectToAction("ApproveTokens");
+
+        }
+
+        public ActionResult Cancel(int id)
+        {
+            auctiondbEntities db = new auctiondbEntities();
+            var order = db.Orders.First(o => o.Id == id);
+            order.State = OrderStates.CANCELED.ToString();
+            db.SaveChanges();
+            return RedirectToAction("ApproveTokens");
         }
     }
 }

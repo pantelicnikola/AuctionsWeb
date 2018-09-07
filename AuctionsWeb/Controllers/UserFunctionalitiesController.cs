@@ -94,7 +94,6 @@ namespace AuctionsWeb.Controllers
                 State = OrderStates.SUBMITTED.ToString()
             };
             db.Orders.Add(order);
-            user.NumTokens += model.NumTokens;
             await db.SaveChangesAsync();
             return Redirect("/");
         }
