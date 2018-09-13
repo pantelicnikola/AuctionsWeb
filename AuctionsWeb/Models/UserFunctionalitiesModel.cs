@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using AuctionsWeb.Enums;
+using AuctionsWeb.Constants;
 
 namespace AuctionsWeb.Models
 {
     public class CreateAuctionModel
     {
+
         [Required]
         [Display(Name = "Auction Name")]
         public string AuctionName { get; set; }
@@ -15,12 +17,13 @@ namespace AuctionsWeb.Models
         public string PhotoURL { get; set; }
 
         [Required]
-        [Display(Name = "Duration")]
-        public int Duration{ get; set; }
-
-        [Required]
         [Display(Name = "Price Start")]
         public decimal PriceStart { get; set; }
+
+        [Required]
+        [Display(Name = "Duration")]
+        public int Duration { get; set; } = SystemParameters.DEFAULT_AUCTION_DURATION;
+
 
     }
 

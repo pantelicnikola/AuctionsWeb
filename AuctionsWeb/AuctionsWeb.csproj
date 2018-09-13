@@ -440,6 +440,7 @@
     <Content Include="Views\UserFunctionalities\Orders.cshtml" />
     <Content Include="Views\AdminFunctionalities\ApproveTokens.cshtml" />
     <Content Include="Views\UserFunctionalities\WonAuctions.cshtml" />
+    <Content Include="Views\AdminFunctionalities\ControlPanel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -5,6 +5,7 @@ using AuctionsWeb.Models;
 using Microsoft.AspNet.Identity;
 using AuctionsWeb.Enums;
 using System.Collections.Generic;
+using AuctionsWeb.Constants;
 
 namespace AuctionsWeb.Controllers
 {
@@ -15,7 +16,8 @@ namespace AuctionsWeb.Controllers
         public ActionResult CreateAuction()
         {
             ViewBag.Message = "Create Auction page.";
-            return View();
+            var model = new CreateAuctionModel();
+            return View(model);
         }
 
         [HttpPost]
@@ -26,7 +28,7 @@ namespace AuctionsWeb.Controllers
                 var auction = new Auction {
                     IdUser = User.Identity.GetUserId(),
                     Name = model.AuctionName,
-                    Duration = model.Duration,
+                    Duration = (model.Duration == 0) ? SystemParameters.DEFAULT_AUCTION_DURATION : model.Duration,
                     Photo = model.PhotoURL,
                     PriceStart = model.PriceStart,
                     PriceNow = model.PriceStart,
@@ -123,10 +125,10 @@ namespace AuctionsWeb.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public ActionResult WonAuctions(int idAuction)
+        public ActionResult AuctionDetails(int idAuction)
         {
-            return Redirect("/Home/Auction/" + idAuction);
+
+            return Redirect("~/Home/Auction/" + idAuction);
         }
     }
 }

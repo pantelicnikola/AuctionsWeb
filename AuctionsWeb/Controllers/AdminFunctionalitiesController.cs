@@ -60,5 +60,11 @@ namespace AuctionsWeb.Controllers
             db.SaveChanges();
             return RedirectToAction("ApproveTokens");
         }
+
+        public ActionResult ControlPanel()
+        {
+            var model = new ControlPanelModel();
+            return View(model);
+        }
     }
 }
