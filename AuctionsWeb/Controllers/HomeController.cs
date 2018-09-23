@@ -188,6 +188,19 @@ namespace AuctionsWeb.Controllers
             var auctionList = new List<Auction>();
             auctionList.Add(auction);
             addDependency(entity.Auctions.ToString());
+            if (auction.State.Contains(AuctionStates.OPEN.ToString()) && auction.TimeEnd < DateTime.Now)
+            {
+                auction.State = AuctionStates.CLOSED.ToString();
+                var bids = auction.Bids.OrderByDescending(b => b.Time);
+                if (bids.Any())
+                {
+                    var winner = bids.First().AspNetUser;
+                    auction.Winner = winner.Id;
+                    auction.PriceEnd = auction.PriceNow;
+                    winner.NumTokens -= auction.TotalTokens;
+                }
+                entity.SaveChanges();
+            }
             return PartialView("Card", auction);
         }
 
