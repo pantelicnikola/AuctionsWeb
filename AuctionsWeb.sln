@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuctionsWeb", "AuctionsWeb\AuctionsWeb.csproj", "{B96E9FB6-0B46-4EA8-B5F9-22B37E916F39}"
 EndProject
-Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "AuctionsWeb.Azure", "AuctionsWeb.Azure\AuctionsWeb.Azure.ccproj", "{65620E0F-DABD-43EC-82B3-8AD34483D5A5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{B96E9FB6-0B46-4EA8-B5F9-22B37E916F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B96E9FB6-0B46-4EA8-B5F9-22B37E916F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B96E9FB6-0B46-4EA8-B5F9-22B37E916F39}.Release|Any CPU.Build.0 = Release|Any CPU
-		{65620E0F-DABD-43EC-82B3-8AD34483D5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65620E0F-DABD-43EC-82B3-8AD34483D5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65620E0F-DABD-43EC-82B3-8AD34483D5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65620E0F-DABD-43EC-82B3-8AD34483D5A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

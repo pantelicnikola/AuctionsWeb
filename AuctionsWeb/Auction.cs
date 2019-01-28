@@ -36,8 +36,8 @@ namespace AuctionsWeb
         public Nullable<int> TotalTokens { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
-        public virtual AspNetUser AspNetUser1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Bid> Bids { get; set; }
+        public virtual AspNetUser AspNetUser1 { get; set; }
     }
 }

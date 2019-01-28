@@ -35,7 +35,7 @@
             $.connection.hub.start().done(function () {
                 console.log("connection started");
                 getData();
-                setInterval(getMoreData, 1000);
+                getMoreData();
             }).fail(function(error) {
                 alert(error)
             });

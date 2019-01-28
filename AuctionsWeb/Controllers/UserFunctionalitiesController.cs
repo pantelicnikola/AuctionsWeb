@@ -74,7 +74,7 @@ namespace AuctionsWeb.Controllers
                 NumTokens = shopTokenInfo.NumTokens,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                TotalPrice = shopTokenInfo.NumTokens * SystemParameters.TOKEN_VALUE
+                TotalPrice = shopTokenInfo.NumTokens * AuctionsWeb.Constants.SystemParameters.TOKEN_VALUE
             };
             TempData["PurchaseTokensModel"] = model;
 
